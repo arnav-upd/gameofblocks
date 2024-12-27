@@ -4,6 +4,33 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>rocket game</title>
+    <style type="text/css">
+        body {
+            overflow: hidden;
+        }
+        #gameArea {
+            background: skyblue;
+            width: 100%;
+            height: 100vh;
+            position: relative;
+        }
+        #rocket {
+            width: 50px;
+            height: 50px;
+            background: red;
+            position: absolute;
+            top: 50%;
+            left: 10%;
+        }
+        .obstacle {
+            width: 50px;
+            height: 50px;
+            background: green;
+            position: absolute;
+            top: 0;
+            left: 100%;
+        }
+    </style>
 </head>
 <body>
 
@@ -12,76 +39,51 @@
 <button onclick="moveLeft()">LEFT</button>
 <button onclick="moveRight()">RIGHT</button>
 
-<center>
-  <div id="animate" tabindex="0">
+<div id="gameArea">
     <div id="rocket"></div>
-  </div>
-</center>
-
-<style type="text/css">
-div {
-  background: skyblue;
-  width: 50%;
-  height: 700px;
-  position: relative;
-}
-
-#rocket {
-  background: red;
-  width: 15%;
-  height: 100px;
-  position: absolute;
-}
-</style>
+</div>
 
 <script>
-let posX = 0;
-let posY = 0;
-const elem = document.getElementById("rocket");
+    let rocket = document.getElementById('rocket');
+    let gameArea = document.getElementById('gameArea');
+    let rocketSpeed = 5;
+    let obstacleSpeed = 2;
 
-document.querySelector('#animate').addEventListener('keyup', function (e) {
-  console.log(e.key)
-  if ('ArrowDown' === e.key) {
-    moveDown();
-  }
-  else if ('ArrowUp' === e.key) {
-    moveUp();
-  }
-  else if ('ArrowLeft' === e.key) {
-    moveLeft();
-  }
-  else if ('ArrowRight' === e.key) {
-    moveRight();
-  }
-})
+    function moveUp() {
+        rocket.style.top = (rocket.offsetTop - rocketSpeed) + 'px';
+    }
 
-function moveUp() {
-  if (posY > 0) {
-    posY -= 10;
-    elem.style.top = posY + "px";
-  }
-}
+    function moveDown() {
+        rocket.style.top = (rocket.offsetTop + rocketSpeed) + 'px';
+    }
 
-function moveDown() {
-  if (posY < document.getElementById("animate").offsetHeight - elem.offsetHeight) {
-    posY += 10;
-    elem.style.top = posY + "px";
-  }
-}
+    function moveLeft() {
+        rocket.style.left = (rocket.offsetLeft - rocketSpeed) + 'px';
+    }
 
-function moveLeft() {
-  if (posX > 0) {
-    posX -= 10;
-    elem.style.left = posX + "px";
-  }
-}
+    function moveRight() {
+        rocket.style.left = (rocket.offsetLeft + rocketSpeed) + 'px';
+    }
 
-function moveRight() {
-  if (posX < document.getElementById("animate").offsetWidth - elem.offsetWidth) {
-    posX += 10;
-    elem.style.left = posX + "px";
-  }
-}
+    function createObstacle() {
+        let obstacle = document.createElement('div');
+        obstacle.className = 'obstacle';
+        obstacle.style.top = Math.random() * gameArea.clientHeight + 'px';
+        gameArea.appendChild(obstacle);
+        moveObstacle(obstacle);
+    }
+
+    function moveObstacle(obstacle) {
+        let interval = setInterval(() => {
+            obstacle.style.left = (obstacle.offsetLeft - obstacleSpeed) + 'px';
+            if (obstacle.offsetLeft < -50) {
+                clearInterval(interval);
+                gameArea.removeChild(obstacle);
+            }
+        }, 20);
+    }
+
+    setInterval(createObstacle, 2000);
 </script>
 
 </body>
