@@ -1,90 +1,99 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>rocket game</title>
-    <style type="text/css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rocket Game</title>
+    <style>
         body {
+            margin: 0;
             overflow: hidden;
         }
         #gameArea {
-            background: skyblue;
-            width: 100%;
-            height: 100vh;
             position: relative;
+            width: 100vw;
+            height: 100vh;
+            background-color:skyblue;
         }
-        #rocket {
+        .rocket {
+            position: absolute;
             width: 50px;
             height: 50px;
-            background: red;
-            position: absolute;
-            top: 50%;
-            left: 10%;
+            background-color: red;
         }
         .obstacle {
-            width: 50px;
-            height: 50px;
-            background: green;
             position: absolute;
-            top: 0;
-            left: 100%;
+            width: 50px;
+            height: 200px;
+            background-color:yellow;
         }
     </style>
 </head>
 <body>
+    <div id="gameArea">
+        <div id="rocket" class="rocket"></div>
+    </div>
+    <script>
+        const gameArea = document.getElementById('gameArea');
+        const rocket = document.getElementById('rocket');
+        let rocketSpeed = 5;
+        let obstacleSpeed = 5;
 
-<button onclick="moveUp()">UP</button>
-<button onclick="moveDown()">DOWN</button>
-<button onclick="moveLeft()">LEFT</button>
-<button onclick="moveRight()">RIGHT</button>
+        rocket.style.top = '50%';
+        rocket.style.left = '10%';
 
-<div id="gameArea">
-    <div id="rocket"></div>
-</div>
+        function createObstacle() {
+            let obstacle = document.createElement('div');
+            obstacle.className = 'obstacle';
+            obstacle.style.top = Math.random() * gameArea.clientHeight + 'px';
+            obstacle.style.left = gameArea.clientWidth + 'px';
+            gameArea.appendChild(obstacle);
+            moveObstacle(obstacle);
+        }
 
-<script>
-    let rocket = document.getElementById('rocket');
-    let gameArea = document.getElementById('gameArea');
-    let rocketSpeed = 5;
-    let obstacleSpeed = 2;
+        function moveObstacle(obstacle) {
+            let interval = setInterval(() => {
+                obstacle.style.left = (obstacle.offsetLeft - obstacleSpeed) + 'px';
+                if (obstacle.offsetLeft < -50) {
+                    clearInterval(interval);
+                    gameArea.removeChild(obstacle);
+                }
+            }, 20);
+        }
 
-    function moveUp() {
-        rocket.style.top = (rocket.offsetTop - rocketSpeed) + 'px';
-    }
+        setInterval(createObstacle, 2000);
 
-    function moveDown() {
-        rocket.style.top = (rocket.offsetTop + rocketSpeed) + 'px';
-    }
-
-    function moveLeft() {
-        rocket.style.left = (rocket.offsetLeft - rocketSpeed) + 'px';
-    }
-
-    function moveRight() {
-        rocket.style.left = (rocket.offsetLeft + rocketSpeed) + 'px';
-    }
-
-    function createObstacle() {
-        let obstacle = document.createElement('div');
-        obstacle.className = 'obstacle';
-        obstacle.style.top = Math.random() * gameArea.clientHeight + 'px';
-        gameArea.appendChild(obstacle);
-        moveObstacle(obstacle);
-    }
-
-    function moveObstacle(obstacle) {
-        let interval = setInterval(() => {
-            obstacle.style.left = (obstacle.offsetLeft - obstacleSpeed) + 'px';
-            if (obstacle.offsetLeft < -50) {
-                clearInterval(interval);
-                gameArea.removeChild(obstacle);
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowUp') {
+                rocket.style.top = (rocket.offsetTop - rocketSpeed) + 'px';
+            } else if (e.key === 'ArrowDown') {
+                rocket.style.top = (rocket.offsetTop + rocketSpeed) + 'px';
             }
-        }, 20);
-    }
+        });
 
-    setInterval(createObstacle, 2000);
-</script>
+        function crashWith(obstacle) {
+            let rocketRect = rocket.getBoundingClientRect();
+            let obstacleRect = obstacle.getBoundingClientRect();
+            return !(
+                rocketRect.top > obstacleRect.bottom ||
+                rocketRect.bottom < obstacleRect.top ||
+                rocketRect.right < obstacleRect.left ||
+                rocketRect.left > obstacleRect.right
+            );
+        }
 
+        function updateGame() {
+            let obstacles = document.getElementsByClassName('obstacle');
+            for (let i = 0; i < obstacles.length; i++) {
+                if (crashWith(obstacles[i])) {
+                    alert('Game Over!');
+                    window.location.reload();
+                }
+            }
+            requestAnimationFrame(updateGame);
+        }
+
+        updateGame();
+    </script>
 </body>
 </html>
