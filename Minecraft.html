@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>rocket game</title>
+</head>
+<body>
+
+<button onclick="moveUp()">UP</button>
+<button onclick="moveDown()">DOWN</button>
+<button onclick="moveLeft()">LEFT</button>
+<button onclick="moveRight()">RIGHT</button>
+
+<center>
+  <div id="animate" tabindex="0">
+    <div id="rocket"></div>
+  </div>
+</center>
+
+<style type="text/css">
+div {
+  background: skyblue;
+  width: 50%;
+  height: 700px;
+  position: relative;
+}
+
+#rocket {
+  background: red;
+  width: 15%;
+  height: 100px;
+  position: absolute;
+}
+</style>
+
+<script>
+let posX = 0;
+let posY = 0;
+const elem = document.getElementById("rocket");
+
+document.querySelector('#animate').addEventListener('keyup', function (e) {
+  console.log(e.key)
+  if ('ArrowDown' === e.key) {
+    moveDown();
+  }
+  else if ('ArrowUp' === e.key) {
+    moveUp();
+  }
+  else if ('ArrowLeft' === e.key) {
+    moveLeft();
+  }
+  else if ('ArrowRight' === e.key) {
+    moveRight();
+  }
+})
+
+function moveUp() {
+  if (posY > 0) {
+    posY -= 10;
+    elem.style.top = posY + "px";
+  }
+}
+
+function moveDown() {
+  if (posY < document.getElementById("animate").offsetHeight - elem.offsetHeight) {
+    posY += 10;
+    elem.style.top = posY + "px";
+  }
+}
+
+function moveLeft() {
+  if (posX > 0) {
+    posX -= 10;
+    elem.style.left = posX + "px";
+  }
+}
+
+function moveRight() {
+  if (posX < document.getElementById("animate").offsetWidth - elem.offsetWidth) {
+    posX += 10;
+    elem.style.left = posX + "px";
+  }
+}
+</script>
+
+</body>
+</html>
